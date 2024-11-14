@@ -5,23 +5,23 @@
       title="What's in my bag?"
       :description="description"
     />
-    <div class="space-y-24">
-      <ul class="space-y-8">
+    <div class="space-y-10">
+      <ul class="space-y-4">
         <AppUsesHeader title="Hardware" />
         <AppUsesItem v-for="(item, id) in hardware" :key="id" :item="item" />
       </ul>
-      <ul class="space-y-8">
+      <ul class="space-y-4">
         <AppUsesHeader title="Software" />
         <AppUsesItem v-for="(item, id) in software" :key="id" :item="item" />
       </ul>
-      <ul class="space-y-8">
+      <!-- <ul class="space-y-8">
         <AppUsesHeader title="Desk" />
         <AppUsesItem v-for="(item, id) in desk" :key="id" :item="item" />
-      </ul>
-      <ul class="space-y-8">
+      </ul> -->
+      <!-- <ul class="space-y-8">
         <AppUsesHeader title="Other" />
         <AppUsesItem v-for="(item, id) in other" :key="id" :item="item" />
-      </ul>
+      </ul> -->
     </div>
   </main>
 </template>
