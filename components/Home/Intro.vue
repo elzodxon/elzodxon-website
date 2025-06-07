@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <NuxtImg src="https://media.licdn.com/dms/image/v2/C4D03AQH0sUP-lP_k4Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1626026862909?e=1736985600&v=beta&t=tpBFf_7hetdtwyinKT-I4yXDu5ILlLDCP4AKFuFdA3E" alt="Elzodxon Sharofaddinov"
+    <NuxtImg src="/elzodxon-sharofaddinov.jpeg" alt="Elzodxon Sharofaddinov"
       class="ring-2 border ring-gray-200 border-gray-300 dark:ring-white/10 dark:border-gray-800 hover:ring-4 transition-all duration-300 bg-gray-200 dark:bg-gray-900 rounded-full h-12 w-12 sm:h-16 sm:w-16"
       sizes="48px sm:64px" placeholder format="webp" />
       <h1>About Me</h1>
