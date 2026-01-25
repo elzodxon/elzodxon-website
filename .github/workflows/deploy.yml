@@ -31,26 +31,24 @@ jobs:
         env:
           TELEGRAM_CHANNEL: elzodxon
 
-      - name: Deploy to VPS
-        uses: easingthemes/ssh-deploy@main
+      - name: Deploy to VPS via rsync
+        uses: burnett01/rsync-deployments@7.0.1
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.VPS_HOST }}
-          REMOTE_USER: ${{ secrets.VPS_USER }}
-          REMOTE_PORT: ${{ secrets.VPS_PORT }}
-          SOURCE: ".output/"
-          TARGET: ${{ env.DEPLOY_PATH }}/.output/
-          EXCLUDE: "node_modules/, .git/, .github/"
-          SCRIPT_AFTER: |
-            cd ${{ env.DEPLOY_PATH }}
-            pm2 restart ecosystem.config.js --update-env || pm2 start ecosystem.config.js
+          switches: -avzr --delete
+          path: .output/
+          remote_path: ${{ env.DEPLOY_PATH }}/.output/
+          remote_host: ${{ secrets.VPS_HOST }}
+          remote_user: ${{ secrets.VPS_USER }}
+          remote_port: ${{ secrets.VPS_PORT }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Copy config files
-        uses: appleboy/scp-action@v0.1.7
+      - name: Copy config files and restart PM2
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          source: "ecosystem.config.js,package.json"
-          target: ${{ env.DEPLOY_PATH }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            pm2 restart ecosystem.config.js --update-env || pm2 start ecosystem.config.js
