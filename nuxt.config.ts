@@ -36,4 +36,8 @@ export default defineNuxtConfig({
       Inter: [400, 500, 600, 700, 800, 900],
     },
   },
+  runtimeConfig: {
+    telegramChannel: process.env.TELEGRAM_CHANNEL || "elzodxon",
+    public: {},
+  },
 });

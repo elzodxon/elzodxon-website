@@ -64,5 +64,10 @@ const items = [
     path: "/bookmarks",
     icon: "solar:bookmark-linear",
   },
+  {
+    name: "Telegram",
+    path: "/telegram",
+    icon: "lucide:send",
+  },
 ];
 </script>

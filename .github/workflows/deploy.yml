@@ -1,0 +1,55 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build application
+        run: yarn build
+        env:
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+
+      - name: Deploy to VPS
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.VPS_HOST }}
+          REMOTE_USER: ${{ secrets.VPS_USER }}
+          REMOTE_PORT: ${{ secrets.VPS_PORT || '22' }}
+          SOURCE: ".output/"
+          TARGET: ${{ secrets.DEPLOY_PATH }}/.output/
+          EXCLUDE: "node_modules/, .git/, .github/"
+          SCRIPT_BEFORE: |
+            mkdir -p ${{ secrets.DEPLOY_PATH }}
+          SCRIPT_AFTER: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            pm2 restart ecosystem.config.js --update-env || pm2 start ecosystem.config.js
+
+      - name: Copy config files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          source: "ecosystem.config.js,package.json"
+          target: ${{ secrets.DEPLOY_PATH }}
