@@ -1,8 +1,6 @@
 <template>
-  <a
-    :href="post.link"
-    target="_blank"
-    rel="noopener noreferrer"
+  <NuxtLink
+    :to="`/telegram/${post.id}`"
     class="group block p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
   >
     <div class="flex items-start gap-4">
@@ -44,7 +42,7 @@
         />
       </div>
     </div>
-  </a>
+  </NuxtLink>
 </template>
 
 <script setup>
