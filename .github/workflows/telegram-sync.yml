@@ -1,0 +1,64 @@
+name: Telegram Posts Sync
+
+on:
+  schedule:
+    # Run daily at 1 AM UTC (1 hour before LinkedIn sync)
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  sync-telegram-posts:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync Telegram posts
+        run: |
+          # Get the deployment URL from environment or use a default
+          SYNC_URL="${SYNC_URL:-http://localhost:3000/api/telegram/sync}"
+          
+          # If SYNC_URL is set, make HTTP request to sync endpoint
+          if [ -n "$SYNC_URL" ] && [ "$SYNC_URL" != "http://localhost:3000/api/telegram/sync" ]; then
+            echo "Calling sync endpoint: $SYNC_URL"
+            curl -X POST "$SYNC_URL?pages=5" \
+              -H "Content-Type: application/json" \
+              -w "\nHTTP Status: %{http_code}\n" \
+              || echo "Sync endpoint call failed (this is expected if the site is not deployed yet)"
+          else
+            echo "SYNC_URL not configured. Skipping HTTP sync call."
+            echo "To enable automated syncing, set SYNC_URL secret in GitHub repository settings."
+            echo "Example: https://your-domain.com/api/telegram/sync"
+          fi
+        env:
+          SYNC_URL: ${{ secrets.TELEGRAM_SYNC_URL }}
+          
+      # Alternative: Run sync locally and commit results (if you want to store posts in git)
+      # Uncomment the following steps if you prefer this approach:
+      # - name: Run sync script locally
+      #   run: |
+      #     npm run build
+      #     node -e "
+      #       const { spawn } = require('child_process');
+      #       spawn('curl', ['-X', 'POST', 'http://localhost:3000/api/telegram/sync?pages=5'], { stdio: 'inherit' });
+      #     "
+      #   env:
+      #     TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL || 'elzodxon' }}
+      # 
+      # - name: Commit and push if changed
+      #   if: github.event_name == 'schedule'
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git add server/data/telegram-posts.json
+      #     git diff --staged --quiet || (git commit -m "chore: update Telegram posts [skip ci]" && git push)

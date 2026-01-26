@@ -1,0 +1,65 @@
+name: LinkedIn Posts Sync
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  sync-linkedin-posts:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync LinkedIn posts
+        run: |
+          # Get the deployment URL from environment or use a default
+          SYNC_URL="${SYNC_URL:-http://localhost:3000/api/linkedin/sync}"
+          
+          # If SYNC_URL is set, make HTTP request to sync endpoint
+          if [ -n "$SYNC_URL" ] && [ "$SYNC_URL" != "http://localhost:3000/api/linkedin/sync" ]; then
+            echo "Calling sync endpoint: $SYNC_URL"
+            curl -X POST "$SYNC_URL?posts=10" \
+              -H "Content-Type: application/json" \
+              -w "\nHTTP Status: %{http_code}\n" \
+              || echo "Sync endpoint call failed (this is expected if the site is not deployed yet)"
+          else
+            echo "SYNC_URL not configured. Skipping HTTP sync call."
+            echo "To enable automated syncing, set SYNC_URL secret in GitHub repository settings."
+            echo "Example: https://your-domain.com/api/linkedin/sync"
+          fi
+        env:
+          SYNC_URL: ${{ secrets.LINKEDIN_SYNC_URL }}
+          
+      # Alternative: Run sync locally and commit results (if you want to store posts in git)
+      # Uncomment the following steps if you prefer this approach:
+      # - name: Run sync script locally
+      #   run: |
+      #     npm run build
+      #     node -e "
+      #       const { spawn } = require('child_process');
+      #       spawn('curl', ['-X', 'POST', 'http://localhost:3000/api/linkedin/sync?posts=10'], { stdio: 'inherit' });
+      #     "
+      #   env:
+      #     LINKEDIN_PROFILE: ${{ secrets.LINKEDIN_PROFILE || 'elzodxon' }}
+      #     LINKEDIN_SESSION_COOKIE: ${{ secrets.LINKEDIN_SESSION_COOKIE }}
+      # 
+      # - name: Commit and push if changed
+      #   if: github.event_name == 'schedule'
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git add server/data/linkedin-posts.json
+      #     git diff --staged --quiet || (git commit -m "chore: update LinkedIn posts [skip ci]" && git push)

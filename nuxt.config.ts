@@ -38,6 +38,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     telegramChannel: process.env.TELEGRAM_CHANNEL || "elzodxon",
+    linkedinProfile: process.env.LINKEDIN_PROFILE || "elzodxon",
+    linkedinSessionCookie: process.env.LINKEDIN_SESSION_COOKIE,
     public: {},
   },
 });
