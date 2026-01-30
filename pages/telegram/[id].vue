@@ -43,13 +43,20 @@
       </header>
 
       <!-- Post image -->
-      <div v-if="post.image" class="mb-8">
+      <div v-if="post.image && !imageFailed" class="mb-8">
         <img
+          ref="postImageRef"
           :src="post.image"
-          :alt="'Post image'"
-          class="w-full rounded-lg shadow-lg"
+          alt="Post image"
+          class="w-full rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800"
           loading="lazy"
+          @error="onImageError"
         />
+      </div>
+      <div v-else class="mb-8">
+        <div class="w-full aspect-video rounded-lg bg-primary-500 flex items-center justify-center">
+          <Icon name="lucide:send" class="w-16 h-16 text-white" />
+        </div>
       </div>
 
       <!-- Post content -->
@@ -124,6 +131,24 @@ const { data, pending, error } = await useAsyncData(
 
 const post = computed(() => data.value?.post || null);
 const navigation = computed(() => data.value?.navigation || null);
+
+// Image handling with fallback
+const imageFailed = ref(false);
+const postImageRef = ref(null);
+
+const onImageError = () => {
+  imageFailed.value = true;
+};
+
+// Check image on mount (handles SSR hydration issues)
+onMounted(() => {
+  if (postImageRef.value) {
+    // Check if image already failed during SSR
+    if (postImageRef.value.complete && postImageRef.value.naturalHeight === 0) {
+      imageFailed.value = true;
+    }
+  }
+});
 
 // SEO
 useSeoMeta({

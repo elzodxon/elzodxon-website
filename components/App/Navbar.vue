@@ -53,7 +53,11 @@ const items = [
     path: "/articles",
     icon: "solar:document-add-outline",
   },
-  { name: "Lab", path: "/lab", icon: "heroicons:beaker" },
+  {
+    name: "Talks",
+    path: "/talks",
+    icon: "lucide:mic",
+  },
   {
     name: "What's in my bag?",
     path: "/whats-in-my-bag",
@@ -64,6 +68,11 @@ const items = [
     path: "/bookmarks",
     icon: "solar:bookmark-linear",
   },
+  // {
+  //   name: "YouTube",
+  //   path: "/youtube",
+  //   icon: "lucide:youtube",
+  // },
   {
     name: "Telegram",
     path: "/telegram",

@@ -33,24 +33,50 @@
           {{ post.description }}
         </p>
       </div>
-      <div v-if="post.image" class="flex-shrink-0">
+      <div class="flex-shrink-0 w-20 h-20">
         <img
-          :src="post.image"
-          :alt="post.title || 'Telegram post image'"
-          class="w-20 h-20 object-cover rounded-lg"
+          v-if="props.post.image && !imageFailed"
+          ref="cardImageRef"
+          :src="props.post.image"
+          :alt="post.title || 'Telegram post'"
+          class="w-20 h-20 object-cover rounded-lg bg-gray-100 dark:bg-gray-800"
           loading="lazy"
+          @error="onImageError"
         />
+        <div
+          v-else
+          class="w-20 h-20 rounded-lg bg-primary-500 flex items-center justify-center"
+        >
+          <Icon name="lucide:send" class="w-6 h-6 text-white" />
+        </div>
       </div>
     </div>
   </NuxtLink>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   post: {
     type: Object,
     required: true,
   },
+});
+
+// Image handling
+const imageFailed = ref(false);
+const cardImageRef = ref(null);
+
+const onImageError = () => {
+  imageFailed.value = true;
+};
+
+// Check image on mount (handles SSR hydration issues)
+onMounted(() => {
+  if (cardImageRef.value) {
+    if (cardImageRef.value.complete && cardImageRef.value.naturalHeight === 0) {
+      imageFailed.value = true;
+    }
+  }
 });
 
 const formatDate = (dateString) => {

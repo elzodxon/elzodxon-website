@@ -59,6 +59,7 @@ export default defineEventHandler(async (event) => {
       
       // Check if there's a "load more" link
       const hasMoreMatch = html.match(/href="[^"]*before=(\d+)"/);
+      
       if (!hasMoreMatch) {
         console.log('No more pages available');
         break;
