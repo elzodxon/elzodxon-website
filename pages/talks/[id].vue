@@ -53,10 +53,10 @@
       <!-- Media content -->
       <div class="mb-8">
         <!-- YouTube embed -->
-        <div v-if="talk.type === 'youtube' && talk.videoId" class="aspect-video rounded-xl overflow-hidden bg-black">
+        <div v-if="talk.type === 'youtube' && talk.videoId" class="relative w-full rounded-xl overflow-hidden bg-black" style="padding-bottom: 56.25%;">
           <iframe
             :src="`https://www.youtube.com/embed/${talk.videoId}`"
-            class="w-full h-full"
+            class="absolute top-0 left-0 w-full h-full"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
