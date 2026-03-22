@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     '/whats-in-my-bag': { isr: 86400 },
     '/bookmarks': { isr: 86400 },
     '/feed': { isr: 1800 },
+    '/sitemap.xml': { redirect: '/api/sitemap.xml' },
   },
 
   // Performance: Compress public assets
