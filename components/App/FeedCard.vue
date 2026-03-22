@@ -1,8 +1,8 @@
 <template>
-  <NuxtLink :to="`/feed/${post.id}`" class="block p-3 rounded-lg ring-1 ring-gray-200 dark:ring-white/10 bg-white/80 dark:bg-gray-900/50 hover:ring-gray-300 dark:hover:ring-white/20 transition-all">
+  <div class="p-3 rounded-lg ring-1 ring-gray-200 dark:ring-white/10 bg-white/80 dark:bg-gray-900/50 hover:ring-gray-300 dark:hover:ring-white/20 transition-all cursor-pointer" @click="navigateToPost">
     <!-- Video type -->
     <template v-if="post.type === 'video'">
-      <a :href="post.link" target="_blank" rel="noopener" class="block relative group">
+      <div class="relative group">
         <img
           v-if="mediaUrl"
           :src="mediaUrl"
@@ -10,13 +10,13 @@
           class="rounded-md w-full"
           loading="lazy"
         />
-        <div class="absolute inset-0 flex items-center justify-center">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
           <Icon
             name="heroicons:play-circle-20-solid"
             class="w-10 h-10 text-white drop-shadow-lg opacity-90 group-hover:opacity-100 transition"
           />
         </div>
-      </a>
+      </div>
       <p v-if="post.title" class="mt-2 text-sm font-medium text-gray-800 dark:text-gray-100">
         {{ post.title }}
       </p>
@@ -57,23 +57,26 @@
           {{ engagementValue }}
         </span>
       </template>
-      <a
-        :href="post.link"
-        target="_blank"
-        rel="noopener"
+      <span
         class="ml-auto transition"
         :class="platformLinkClass"
       >
         <Icon :name="platformIcon" class="w-3.5 h-3.5" />
-      </a>
+      </span>
     </div>
-  </NuxtLink>
+  </div>
 </template>
 
 <script lang="ts" setup>
+const router = useRouter()
+
 const props = defineProps<{
   post: any
 }>()
+
+function navigateToPost() {
+  router.push(`/feed/${props.post.id}`)
+}
 
 const mediaUrl = computed(() => {
   const m = props.post.media
