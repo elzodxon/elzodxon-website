@@ -66,6 +66,6 @@ export default defineNuxtConfig({
   // Telegram channel config
   runtimeConfig: {
     telegramChannel: 'elzodxon',
-    youtubeChannelId: '',
+    youtubeChannelId: 'UCJVDJ7H48SHV0nVirSHs8MQ',
   },
 });

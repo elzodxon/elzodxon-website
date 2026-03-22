@@ -1,5 +1,5 @@
 <template>
-  <div class="p-3 rounded-lg ring-1 ring-gray-200 dark:ring-white/10 bg-white/80 dark:bg-gray-900/50">
+  <NuxtLink :to="`/feed/${post.id}`" class="block p-3 rounded-lg ring-1 ring-gray-200 dark:ring-white/10 bg-white/80 dark:bg-gray-900/50 hover:ring-gray-300 dark:hover:ring-white/20 transition-all">
     <!-- Video type -->
     <template v-if="post.type === 'video'">
       <a :href="post.link" target="_blank" rel="noopener" class="block relative group">
@@ -7,7 +7,7 @@
           v-if="mediaUrl"
           :src="mediaUrl"
           :alt="post.title || 'Video thumbnail'"
-          class="rounded-md w-full max-h-48 sm:max-h-56 object-cover"
+          class="rounded-md w-full"
           loading="lazy"
         />
         <div class="absolute inset-0 flex items-center justify-center">
@@ -20,21 +20,21 @@
       <p v-if="post.title" class="mt-2 text-sm font-medium text-gray-800 dark:text-gray-100">
         {{ post.title }}
       </p>
-      <p v-if="post.text" class="mt-1 whitespace-pre-line text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+      <p v-if="post.text" class="mt-1 whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
         {{ post.text }}
       </p>
     </template>
 
     <!-- Image type -->
     <template v-else-if="post.type === 'image'">
-      <p v-if="post.text" class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300 line-clamp-4 sm:line-clamp-6">
+      <p v-if="post.text" class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
         {{ post.text }}
       </p>
       <div v-if="mediaUrl && !mediaUrl.includes('emoji')" class="mt-2">
         <img
           :src="mediaUrl"
           :alt="post.title || 'Post ' + post.id"
-          class="rounded-md max-h-48 sm:max-h-56 object-cover w-full"
+          class="rounded-md w-full"
           loading="lazy"
         />
       </div>
@@ -42,7 +42,7 @@
 
     <!-- Text type -->
     <template v-else>
-      <p class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300 line-clamp-4 sm:line-clamp-6">
+      <p class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
         {{ post.text }}
       </p>
     </template>
@@ -67,7 +67,7 @@
         <Icon :name="platformIcon" class="w-3.5 h-3.5" />
       </a>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script lang="ts" setup>

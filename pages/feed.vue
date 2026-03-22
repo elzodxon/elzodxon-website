@@ -67,7 +67,7 @@ const filters = [
 
 const selected = ref('')
 const currentPage = ref(1)
-const limit = 12
+const limit = 20
 const loadingMore = ref(false)
 const allPosts = ref<any[]>([])
 const hasMore = ref(false)

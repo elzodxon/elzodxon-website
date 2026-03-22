@@ -1,21 +1,9 @@
 <template>
-  <main class="min-h-screen">
-    <AppHeader class="mb-12" title="Experiments" :description="description" />
-    <div class="space-y-24">
-      <ContentList path="/lab" v-slot="{ list }">
-        <ContentQuery
-          v-for="item in list"
-          :key="item._path"
-          :path="item._path"
-          find="one"
-          v-slot="{ data }"
-        >
-          <ContentRenderer>
-            <ContentRendererMarkdown :value="data" />
-          </ContentRenderer>
-        </ContentQuery>
-      </ContentList>
-    </div>
+  <main>
+    <AppHeader class="mb-8" title="Experiments" :description="description" />
+    <p class="text-sm text-gray-400 dark:text-gray-500 text-center py-12">
+      Coming soon.
+    </p>
   </main>
 </template>
 
