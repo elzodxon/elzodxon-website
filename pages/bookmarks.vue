@@ -28,10 +28,12 @@
 
 <script setup>
 const description =
-  "Awesome things I've found on the internet. This page is still WIP, I want to add search like bmrks.com";
+  "Awesome things I've found on the internet — tools, design resources, and developer utilities.";
 useSeoMeta({
   title: "Bookmarks | Elzodxon Sharofaddinov",
   description,
+  ogTitle: "Bookmarks | Elzodxon Sharofaddinov",
+  ogDescription: description,
 });
 
 const bookmarks = [

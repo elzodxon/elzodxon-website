@@ -32,6 +32,8 @@ const description =
 useSeoMeta({
   title: "Things I use | Elzodxon Sharofaddinov",
   description,
+  ogTitle: "Things I use | Elzodxon Sharofaddinov",
+  ogDescription: description,
 });
 const { data: items } = await useAsyncData("uses", () =>
   queryContent("/uses").find()

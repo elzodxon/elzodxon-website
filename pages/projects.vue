@@ -17,6 +17,8 @@ const description =
 useSeoMeta({
   title: "Projects | Elzodxon Sharofaddinov",
   description,
+  ogTitle: "Projects | Elzodxon Sharofaddinov",
+  ogDescription: description,
 });
 
 const { data: projects } = await useAsyncData("projects-all", () =>

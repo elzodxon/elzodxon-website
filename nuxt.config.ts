@@ -23,6 +23,10 @@ export default defineNuxtConfig({
       bodyAttrs: {
         class: "antialiased bg-gray-50 dark:bg-black min-h-screen",
       },
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      ],
     },
   },
   content: {
@@ -46,6 +50,7 @@ export default defineNuxtConfig({
     '/lab': { isr: 3600 },
     '/whats-in-my-bag': { isr: 86400 },
     '/bookmarks': { isr: 86400 },
+    '/feed': { isr: 1800 },
   },
 
   // Performance: Compress public assets
@@ -58,31 +63,9 @@ export default defineNuxtConfig({
     payloadExtraction: 'deep',
   },
 
-  // Performance: Optimize bundle splitting
-  vite: {
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'nuxt-ui': ['@nuxt/ui'],
-            'vue': ['vue', '@vue/runtime-core', '@vue/runtime-dom'],
-          },
-        },
-      },
-    },
-  },
-
-  // Image optimization settings
-  image: {
-    quality: 80,
-    format: ['webp', 'avif', 'jpeg'],
-    screens: {
-      xs: 320,
-      sm: 640,
-      md: 768,
-      lg: 1024,
-      xl: 1280,
-      xxl: 1536,
-    },
+  // Telegram channel config
+  runtimeConfig: {
+    telegramChannel: 'elzodxon',
+    youtubeChannelId: '',
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <main class="min-h-screen">
-    <AppHeader class="mb-12" title="Lab" :description="description" />
+    <AppHeader class="mb-12" title="Experiments" :description="description" />
     <div class="space-y-24">
       <ContentList path="/lab" v-slot="{ list }">
         <ContentQuery
@@ -20,9 +20,11 @@
 </template>
 
 <script setup>
-const description = "Some random experiments with UI I do in my free time.";
+const description = "Things I'm building, breaking, and learning from.";
 useSeoMeta({
-  title: "Lab | Elzodxon Sharofaddinov",
+  title: "Experiments | Elzodxon Sharofaddinov",
   description,
+  ogTitle: "Experiments | Elzodxon Sharofaddinov",
+  ogDescription: description,
 });
 </script>

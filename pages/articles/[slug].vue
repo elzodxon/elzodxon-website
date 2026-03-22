@@ -13,7 +13,20 @@
 <script setup>
 const route = useRoute();
 const { slug } = route.params;
+
+const { data: doc } = await useAsyncData(`article-${slug}`, () =>
+  queryContent(`/articles/${slug}`).findOne()
+);
+
+const title = computed(() => doc.value?.title ? `${doc.value.title} | Elzodxon Sharofaddinov` : 'Elzodxon Sharofaddinov');
+const description = computed(() => doc.value?.description || '');
+
 useSeoMeta({
+  title,
+  description,
+  ogTitle: title,
+  ogDescription: description,
+  ogUrl: `https://elzodxon.uz/articles/${slug}`,
   ogImage: `https://elzodxon.uz/articles/${slug}.png`,
   twitterCard: 'summary_large_image',
   articleAuthor: 'Elzodxon Sharofaddinov',

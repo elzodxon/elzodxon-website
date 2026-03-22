@@ -1,6 +1,6 @@
 <template>
   <div ref="headerRef" :style="styles" class="fixed top-0 w-full z-50">
-    <nav class="mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
+    <nav class="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
       <div
         class="flex items-center justify-between my-4 px-4 py-2 text-sm font-medium text-gray-800 rounded-2xl shadow-lg bg-white/80 shadow-gray-800/5 ring-1 backdrop-blur-xl dark:bg-gray-900/80 dark:text-gray-200 dark:ring-white/10 ring-gray-900/5"
       >
@@ -22,15 +22,14 @@
         </ULink>
 
         <!-- Desktop Navigation -->
-        <ul class="hidden md:flex items-center gap-1">
+        <ul class="hidden md:flex items-center gap-0.5">
           <li v-for="item in items" :key="item.path">
             <ULink
               :to="item.path"
-              class="relative px-3 py-2 flex items-center gap-1.5 rounded-lg transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
+              class="relative px-2.5 py-1.5 rounded-lg transition-all duration-200 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
               :class="$route.path === item.path ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10' : ''"
             >
-              <Icon aria-hidden="true" :name="item.icon" class="w-4 h-4" />
-              <span class="text-xs font-medium">{{ item.label }}</span>
+              {{ item.label }}
             </ULink>
           </li>
         </ul>
@@ -99,9 +98,11 @@ watch(() => route.path, () => {
 });
 
 const items = [
-  { name: "Projects", label: "Projects", path: "/projects", icon: "solar:folder-with-files-outline" },
+  { name: "Feed", label: "Feed", path: "/feed", icon: "solar:rss-outline" },
+  { name: "CV", label: "CV", path: "/cv", icon: "solar:document-text-outline" },
   { name: "Articles", label: "Articles", path: "/articles", icon: "solar:document-add-outline" },
-  { name: "Lab", label: "Lab", path: "/lab", icon: "heroicons:beaker" },
+  { name: "Experiments", label: "Experiments", path: "/lab", icon: "solar:test-tube-outline" },
+  { name: "Books", label: "Books", path: "/books", icon: "solar:book-outline" },
   { name: "Bag", label: "Bag", path: "/whats-in-my-bag", icon: "solar:backpack-outline" },
   { name: "Bookmarks", label: "Saves", path: "/bookmarks", icon: "solar:bookmark-linear" },
 ];

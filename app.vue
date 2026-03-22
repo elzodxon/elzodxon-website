@@ -1,11 +1,22 @@
+<script setup>
+useSeoMeta({
+  ogSiteName: 'Elzodxon Sharofaddinov',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterSite: '@elzodxon_me',
+  twitterCreator: '@elzodxon_me',
+  ogImage: '/elzodxon-sharofaddinov.jpeg',
+});
+</script>
+
 <template>
   <NuxtLoadingIndicator color="#14b8a6" />
   <AppNavbar />
-  <div class="h-32"></div>
+  <div class="h-28"></div>
   <UContainer>
     <NuxtPage />
   </UContainer>
-  <div class="h-32"></div>
+  <div class="h-16"></div>
   <AppFooter />
 </template>
 
