@@ -1,17 +1,21 @@
 <template>
-  <main class="min-h-screen">
-    <AppHeader class="mb-16" title="Articles" :description="description" />
-    <ul class="space-y-16">
-      <li v-for="(article, id) in articles" :key="id">
-        <AppArticleCard :article="article" />
-      </li>
-    </ul>
+  <main>
+    <AppHeader class="mb-8" title="Articles" :description="description" />
+    <div class="space-y-6">
+      <AppArticleCard
+        v-for="(article, id) in articles"
+        :key="id"
+        :article="article"
+      />
+    </div>
+    <p v-if="!articles?.length" class="text-sm text-gray-400 text-center py-12">
+      No articles yet.
+    </p>
   </main>
 </template>
 
 <script setup>
-const description =
-  "All of my long-form thoughts on programming, user interfaces, product design, and more, collected in chronological order.";
+const description = "Long-form thoughts on building products, startups, and engineering.";
 useSeoMeta({
   title: "Articles | Elzodxon Sharofaddinov",
   description,
@@ -20,6 +24,8 @@ useSeoMeta({
 });
 
 const { data: articles } = await useAsyncData("all-articles", () =>
-  queryContent("/articles").find()
+  queryContent("/articles")
+    .sort({ date: -1 })
+    .find()
 );
 </script>
