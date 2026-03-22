@@ -4,7 +4,7 @@
       LATEST UPDATES
     </h2>
     <div class="space-y-3">
-      <FeedFeedCard
+      <AppFeedCard
         v-for="post in posts"
         :key="post.id"
         :post="post"

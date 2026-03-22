@@ -99,11 +99,11 @@ watch(() => route.path, () => {
 
 const items = [
   { name: "Feed", label: "Feed", path: "/feed", icon: "solar:rss-outline" },
-  { name: "CV", label: "CV", path: "/cv", icon: "solar:document-text-outline" },
   { name: "Articles", label: "Articles", path: "/articles", icon: "solar:document-add-outline" },
   { name: "Experiments", label: "Experiments", path: "/lab", icon: "solar:test-tube-outline" },
   { name: "Books", label: "Books", path: "/books", icon: "solar:book-outline" },
   { name: "Bag", label: "Bag", path: "/whats-in-my-bag", icon: "solar:backpack-outline" },
   { name: "Bookmarks", label: "Saves", path: "/bookmarks", icon: "solar:bookmark-linear" },
+  { name: "CV", label: "CV", path: "/cv", icon: "solar:document-text-outline" },
 ];
 </script>

@@ -21,7 +21,7 @@
 
     <!-- Feed list -->
     <div class="space-y-3">
-      <FeedFeedCard
+      <AppFeedCard
         v-for="post in allPosts"
         :key="post.id"
         :post="post"

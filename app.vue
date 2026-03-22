@@ -16,7 +16,7 @@ useSeoMeta({
   <UContainer>
     <NuxtPage />
   </UContainer>
-  <div class="h-16"></div>
+  <div class="h-8"></div>
   <AppFooter />
 </template>
 
