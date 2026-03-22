@@ -5,6 +5,7 @@ const DATA_DIR = join(process.cwd(), 'server/data')
 
 interface FeedPost {
   id: string
+  slug: string
   platform: 'telegram' | 'linkedin' | 'youtube'
   type: 'text' | 'image' | 'video'
   title?: string
@@ -20,6 +21,20 @@ interface FeedPost {
     likes?: number
     comments?: number
   }
+}
+
+function generateSlug(text: string, id: string, platform: string): string {
+  const source = text || id
+  const slug = source
+    .toLowerCase()
+    .replace(/https?:\/\/[^\s]+/g, '') // remove URLs
+    .replace(/[^a-z0-9\s-]/g, '') // remove non-alphanumeric
+    .replace(/\s+/g, '-') // spaces to hyphens
+    .replace(/-+/g, '-') // collapse hyphens
+    .replace(/^-|-$/g, '') // trim hyphens
+    .substring(0, 60) // max length
+    .replace(/-$/, '') // trim trailing hyphen
+  return `${platform.substring(0, 2)}-${slug || id}`
 }
 
 async function readJsonFile<T>(filename: string): Promise<T[]> {
@@ -50,8 +65,10 @@ export default defineEventHandler(async (event) => {
 
     // Normalize telegram posts
     for (const post of telegramPosts) {
+      const id = `tg-${post.id}`
       posts.push({
-        id: `tg-${post.id}`,
+        id,
+        slug: generateSlug(post.description || '', post.id, 'telegram'),
         platform: 'telegram',
         type: post.image ? 'image' : 'text',
         text: post.description || '',
@@ -68,8 +85,10 @@ export default defineEventHandler(async (event) => {
 
     // Normalize linkedin posts
     for (const post of linkedinPosts) {
+      const id = `li-${post.id}`
       posts.push({
-        id: `li-${post.id}`,
+        id,
+        slug: generateSlug(post.text || '', post.id, 'linkedin'),
         platform: 'linkedin',
         type: 'text',
         text: post.text || '',
@@ -88,8 +107,10 @@ export default defineEventHandler(async (event) => {
 
     // Normalize youtube posts
     for (const post of youtubePosts) {
+      const id = `yt-${post.id}`
       posts.push({
-        id: `yt-${post.id}`,
+        id,
+        slug: generateSlug(post.title || post.description || '', post.id, 'youtube'),
         platform: 'youtube',
         type: 'video',
         title: post.title || '',

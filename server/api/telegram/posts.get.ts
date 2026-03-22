@@ -26,7 +26,6 @@ export default defineEventHandler(async (event) => {
     let posts: TelegramPost[] = []
     let shouldFetch = refresh
 
-    // Check if cache exists and is fresh
     if (!shouldFetch) {
       try {
         const stat = await fs.stat(DATA_FILE)
@@ -51,23 +50,14 @@ export default defineEventHandler(async (event) => {
     if (shouldFetch) {
       const config = useRuntimeConfig()
       const channelUsername = config.telegramChannel || 'elzodxon'
-      const url = `https://t.me/s/${channelUsername}`
 
       try {
-        const html = await $fetch<string>(url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          },
-        })
+        posts = await fetchAllPosts(channelUsername)
 
-        posts = parsePostsFromHtml(html)
-
-        // Save cache
         const dataDir = join(process.cwd(), 'server/data')
         await fs.mkdir(dataDir, { recursive: true })
         await fs.writeFile(DATA_FILE, JSON.stringify(posts, null, 2))
       } catch {
-        // Fallback to stale cache if scrape fails
         try {
           const data = await fs.readFile(DATA_FILE, 'utf-8')
           posts = JSON.parse(data)
@@ -115,6 +105,57 @@ export default defineEventHandler(async (event) => {
   }
 })
 
+async function fetchAllPosts(channelUsername: string): Promise<TelegramPost[]> {
+  const allPosts: TelegramPost[] = []
+  const seenIds = new Set<string>()
+  let before: string | null = null
+  const maxPages = 50 // safety limit
+
+  for (let i = 0; i < maxPages; i++) {
+    let url = `https://t.me/s/${channelUsername}`
+    if (before) {
+      url += `?before=${before}`
+    }
+
+    const html = await $fetch<string>(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
+    })
+
+    const pagePosts = parsePostsFromHtml(html)
+
+    if (pagePosts.length === 0) break
+
+    let newCount = 0
+    for (const post of pagePosts) {
+      if (!seenIds.has(post.id)) {
+        seenIds.add(post.id)
+        allPosts.push(post)
+        newCount++
+      }
+    }
+
+    if (newCount === 0) break
+
+    // Get the oldest post ID for next page
+    const oldestId = pagePosts.reduce((min, p) => {
+      const num = parseInt(p.id)
+      return num < min ? num : min
+    }, Infinity)
+
+    before = String(oldestId)
+
+    // Small delay to be polite
+    await new Promise(r => setTimeout(r, 300))
+  }
+
+  // Sort oldest first (consistent with original)
+  allPosts.sort((a, b) => parseInt(a.id) - parseInt(b.id))
+
+  return allPosts
+}
+
 function parsePostsFromHtml(html: string): TelegramPost[] {
   const posts: TelegramPost[] = []
   const regex =
@@ -161,5 +202,5 @@ function parsePostsFromHtml(html: string): TelegramPost[] {
     }
   }
 
-  return posts.reverse()
+  return posts
 }

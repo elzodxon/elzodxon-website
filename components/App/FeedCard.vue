@@ -20,17 +20,14 @@
       <p v-if="post.title" class="mt-2 text-sm font-medium text-gray-800 dark:text-gray-100">
         {{ post.title }}
       </p>
-      <p v-if="post.text" class="mt-1 whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
+      <p v-if="post.text" class="mt-1 whitespace-pre-line text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
         {{ post.text }}
       </p>
     </template>
 
     <!-- Image type -->
     <template v-else-if="post.type === 'image'">
-      <p v-if="post.text" class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
-        {{ post.text }}
-      </p>
-      <div v-if="mediaUrl && !mediaUrl.includes('emoji')" class="mt-2">
+      <div v-if="mediaUrl && !mediaUrl.includes('emoji')" class="mb-2">
         <img
           :src="mediaUrl"
           :alt="post.title || 'Post ' + post.id"
@@ -38,11 +35,14 @@
           loading="lazy"
         />
       </div>
+      <p v-if="post.text" class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
+        {{ post.text }}
+      </p>
     </template>
 
     <!-- Text type -->
     <template v-else>
-      <p class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">
+      <p class="whitespace-pre-line text-sm text-gray-700 dark:text-gray-300 line-clamp-4">
         {{ post.text }}
       </p>
     </template>
@@ -75,7 +75,7 @@ const props = defineProps<{
 }>()
 
 function navigateToPost() {
-  router.push(`/feed/${props.post.id}`)
+  router.push(`/feed/${props.post.slug || props.post.id}`)
 }
 
 const mediaUrl = computed(() => {

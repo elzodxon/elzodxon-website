@@ -3,6 +3,20 @@ import { join } from 'path'
 
 const DATA_DIR = join(process.cwd(), 'server/data')
 
+function generateSlug(text: string, id: string, platform: string): string {
+  const source = text || id
+  const slug = source
+    .toLowerCase()
+    .replace(/https?:\/\/[^\s]+/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 60)
+    .replace(/-$/, '')
+  return `${platform.substring(0, 2)}-${slug || id}`
+}
+
 async function readJsonFile<T>(filename: string): Promise<T[]> {
   try {
     const data = await fs.readFile(join(DATA_DIR, filename), 'utf-8')
@@ -13,9 +27,9 @@ async function readJsonFile<T>(filename: string): Promise<T[]> {
 }
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing post ID' })
+  const slug = getRouterParam(event, 'id')
+  if (!slug) {
+    throw createError({ statusCode: 400, statusMessage: 'Missing post slug' })
   }
 
   const [telegramPosts, linkedinPosts, youtubePosts] = await Promise.all([
@@ -24,13 +38,13 @@ export default defineEventHandler(async (event) => {
     readJsonFile<any>('youtube-posts.json'),
   ])
 
-  // Search in telegram
-  if (id.startsWith('tg-')) {
-    const postId = id.replace('tg-', '')
-    const post = telegramPosts.find((p: any) => p.id === postId)
-    if (post) {
+  // Search telegram
+  for (const post of telegramPosts) {
+    const postSlug = generateSlug(post.description || '', post.id, 'telegram')
+    if (postSlug === slug || `tg-${post.id}` === slug) {
       return {
         id: `tg-${post.id}`,
+        slug: postSlug,
         platform: 'telegram',
         type: post.image ? 'image' : 'text',
         text: post.description || '',
@@ -42,13 +56,13 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Search in youtube
-  if (id.startsWith('yt-')) {
-    const videoId = id.replace('yt-', '')
-    const post = youtubePosts.find((p: any) => p.id === videoId)
-    if (post) {
+  // Search youtube
+  for (const post of youtubePosts) {
+    const postSlug = generateSlug(post.title || post.description || '', post.id, 'youtube')
+    if (postSlug === slug || `yt-${post.id}` === slug) {
       return {
         id: `yt-${post.id}`,
+        slug: postSlug,
         platform: 'youtube',
         type: 'video',
         title: post.title || '',
@@ -60,13 +74,13 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Search in linkedin
-  if (id.startsWith('li-')) {
-    const postId = id.replace('li-', '')
-    const post = linkedinPosts.find((p: any) => p.id === postId)
-    if (post) {
+  // Search linkedin
+  for (const post of linkedinPosts) {
+    const postSlug = generateSlug(post.text || '', post.id, 'linkedin')
+    if (postSlug === slug || `li-${post.id}` === slug) {
       return {
         id: `li-${post.id}`,
+        slug: postSlug,
         platform: 'linkedin',
         type: 'text',
         text: post.text || '',
