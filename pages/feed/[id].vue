@@ -1,7 +1,12 @@
 <template>
   <main>
-    <div v-if="post" class="max-w-2xl">
+    <div v-if="post">
       <article>
+        <!-- Video title -->
+        <h1 v-if="post.title" class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+          {{ post.title }}
+        </h1>
+
         <!-- Post content -->
         <p class="whitespace-pre-line text-gray-800 dark:text-gray-200 leading-relaxed">
           {{ post.text }}
@@ -46,7 +51,7 @@
       </div>
     </div>
 
-    <div v-else class="text-center py-12">
+    <div v-else-if="error" class="text-center py-12">
       <p class="text-sm text-gray-400">Post not found.</p>
       <UButton label="Back to Feed" to="/feed" variant="link" color="gray" class="mt-4" />
     </div>
@@ -57,14 +62,7 @@
 const route = useRoute()
 const postId = route.params.id as string
 
-const { data } = await useFetch('/api/feed', {
-  query: { limit: 50 },
-})
-
-const post = computed(() => {
-  const posts = data.value?.posts || []
-  return posts.find((p: any) => p.id === postId) || null
-})
+const { data: post, error } = await useFetch(`/api/feed/${postId}`)
 
 const mediaUrl = computed(() => {
   const m = post.value?.media
@@ -93,10 +91,22 @@ function formatDate(dateStr: string) {
   })
 }
 
+const postTitle = computed(() => {
+  if (!post.value) return 'Post | Elzodxon'
+  if (post.value.title) return `${post.value.title} | Elzodxon`
+  const text = post.value.text || ''
+  return `${text.substring(0, 60).trim()}... | Elzodxon`
+})
+
+const postDescription = computed(() => {
+  if (!post.value) return ''
+  return (post.value.text || '').substring(0, 160)
+})
+
 useSeoMeta({
-  title: computed(() => post.value ? `${post.value.text?.substring(0, 60)}... | Elzodxon` : 'Post | Elzodxon'),
-  description: computed(() => post.value?.text?.substring(0, 160) || ''),
-  ogTitle: computed(() => post.value?.title || post.value?.text?.substring(0, 60) || 'Post'),
-  ogDescription: computed(() => post.value?.text?.substring(0, 160) || ''),
+  title: postTitle,
+  description: postDescription,
+  ogTitle: postTitle,
+  ogDescription: postDescription,
 })
 </script>
